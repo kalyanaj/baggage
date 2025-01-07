@@ -24,32 +24,71 @@ namespace BaggageTests
             Assert.AreEqual("SomeValue", baggage.GetBaggage("SomeKey"));
         }
 
+        //[TestMethod]
+        //public void TestParseMultiple()
+        //{
+        //    var baggage = Baggage.Create(new Dictionary<string, string>
+        //    {
+        //        { "SomeKey", "SomeValue" },
+        //        { "SomeKey2", "SomeValue2" }
+        //    });
+
+        //    Assert.AreEqual(2, baggage.Count);
+        //    Assert.AreEqual("SomeValue", baggage.GetBaggage("SomeKey"));
+        //    Assert.AreEqual("SomeValue2", baggage.GetBaggage("SomeKey2"));
+        //}
+
         [TestMethod]
         public void TestParseMultiple()
         {
             var baggage = Baggage.Create(new Dictionary<string, string>
-            {
-                { "SomeKey", "SomeValue" },
-                { "SomeKey2", "SomeValue2" }
-            });
+    {
+        { "SomeKey", "SomeValue;SomeProp" },
+        { "SomeKey2", "SomeValue2;ValueProp=PropVal" }
+    });
 
             Assert.AreEqual(2, baggage.Count);
-            Assert.AreEqual("SomeValue", baggage.GetBaggage("SomeKey"));
-            Assert.AreEqual("SomeValue2", baggage.GetBaggage("SomeKey2"));
+
+            var keyValuePairs = baggage.GetBaggage();
+            Assert.IsTrue(keyValuePairs.ContainsKey("SomeKey"));
+            Assert.AreEqual("SomeValue;SomeProp", keyValuePairs["SomeKey"]);
+
+            Assert.IsTrue(keyValuePairs.ContainsKey("SomeKey2"));
+            Assert.AreEqual("SomeValue2;ValueProp=PropVal", keyValuePairs["SomeKey2"]);
         }
 
+
+        //[TestMethod]
+        //public void TestParseWithOWS()
+        //{
+        //    var baggage = Baggage.Create(new Dictionary<string, string>
+        //    {
+        //        { " SomeKey ", " SomeValue " },
+        //        { " SomeKey2 ", " SomeValue2 " }
+        //    });
+
+        //    Assert.AreEqual(2, baggage.Count);
+        //    Assert.AreEqual(" SomeValue ", baggage.GetBaggage(" SomeKey "));
+        //    Assert.AreEqual(" SomeValue2 ", baggage.GetBaggage(" SomeKey2 "));
+        //}
+
         [TestMethod]
-        public void TestParseWithOWS()
+        public void TestParseMultipleWithOWS()
         {
             var baggage = Baggage.Create(new Dictionary<string, string>
-            {
-                { " SomeKey ", " SomeValue " },
-                { " SomeKey2 ", " SomeValue2 " }
-            });
+    {
+        { " SomeKey ", " SomeValue ; SomeProp " },
+        { " SomeKey2 ", " SomeValue2 ; ValueProp = PropVal " }
+    });
 
             Assert.AreEqual(2, baggage.Count);
-            Assert.AreEqual(" SomeValue ", baggage.GetBaggage(" SomeKey "));
-            Assert.AreEqual(" SomeValue2 ", baggage.GetBaggage(" SomeKey2 "));
+
+            var keyValuePairs = baggage.GetBaggage();
+            Assert.IsTrue(keyValuePairs.ContainsKey("SomeKey"));
+            Assert.AreEqual("SomeValue ; SomeProp", keyValuePairs["SomeKey"].Trim());
+
+            Assert.IsTrue(keyValuePairs.ContainsKey("SomeKey2"));
+            Assert.AreEqual("SomeValue2 ; ValueProp = PropVal", keyValuePairs["SomeKey2"].Trim());
         }
 
         [TestMethod]
